@@ -1,6 +1,3 @@
-/* MicYou Default Blue Theme v1.0.0 */
-/* Load this file after the base theme variables. */
-
 :root,
 :root[class] {
   --background: 215 15% 96%;

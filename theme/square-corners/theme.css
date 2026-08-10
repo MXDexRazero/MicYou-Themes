@@ -1,6 +1,3 @@
-/* MicYou Square Corners Theme v0.1.0 */
-/* Shape-only experiment: inherit the active MicYou theme colors. */
-
 :root,
 :root[class] {
   --radius: 0px;
