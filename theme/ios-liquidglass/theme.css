@@ -1,0 +1,400 @@
+/* ==========================================================================
+   iOS 27 Glass — MicYou Theme
+   --------------------------------------------------------------------------
+   manifest: controlsThemeColor = false
+   本主题不接管主题色，只提供「材质 + 形状」：
+     · 所有颜色变量（--primary / --surface / --background ...）均读取应用
+       自身的主题色，本文件不覆盖任何一个，也不给任何元素指定颜色；
+     · 半透明处理一律使用应用自己的颜色 + alpha，色相保持不变；
+     · 折射底衬与高光使用中性明度（黑/白 alpha），不引入色相。
+
+   设计依据：iOS 27 对 Liquid Glass 的修订（WWDC 2026）
+     · 更均匀的折射 + 更高对比度，材质背后复杂内容被更好地扩散
+     · 玻璃元素四周「加深的边缘」+ 更明亮的镜面高光，增强纵深与分离感
+     · 系统级通透度滑块（crystal-clear ↔ fully tinted）
+
+   可调旋钮（改一个值即可全局生效）：
+     --ios-glass-tint      玻璃着色量，等价于 iOS 27 的通透度滑块
+                           0.55 = 极致通透（crystal-clear）
+                           1.00 = 完全着色（fully tinted）
+     --ios-glass-blur      折射模糊半径
+     --ios-glass-saturate  折射饱和度
+     --radius              连续圆角基准
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. 材质旋钮 · 浅色
+   -------------------------------------------------------------------------- */
+
+:root,
+:root[class] {
+  /* 形状：iOS 连续圆角（squircle），面板 22px */
+  --radius: 1.375rem;
+
+  /* --- Liquid Glass 材质 --- */
+  --ios-glass-tint: 0.72;
+  --ios-glass-blur: 30px;
+  --ios-glass-saturate: 185%;
+
+  /* 加深的边缘：iOS 27 用来制造纵深与分离感 */
+  --ios-edge-inner: 0 0% 100% / 0.55;
+  --ios-edge-outer: 240 6% 10% / 0.1;
+  /* 镜面高光 */
+  --ios-specular: 0 0% 100% / 0.5;
+  --ios-sheen: 0 0% 100% / 0.45;
+}
+
+/* --------------------------------------------------------------------------
+   2. 材质旋钮 · 深色
+      深色下玻璃更「重」：边缘更暗、高光更弱、折射更强。
+   -------------------------------------------------------------------------- */
+
+:root.dark,
+html.dark[class],
+.dark {
+  --ios-glass-tint: 0.62;
+  --ios-glass-blur: 34px;
+  --ios-glass-saturate: 200%;
+
+  --ios-edge-inner: 0 0% 100% / 0.16;
+  --ios-edge-outer: 240 6% 0% / 0.55;
+  --ios-specular: 0 0% 100% / 0.14;
+  --ios-sheen: 0 0% 100% / 0.08;
+}
+
+/* --------------------------------------------------------------------------
+   3. 折射底衬
+      玻璃需要背后有内容才会产生折射。这里只用中性明度做柔光，
+      不引入任何色相，因此不会改变应用的配色观感。
+   -------------------------------------------------------------------------- */
+
+body {
+  background-image:
+    radial-gradient(60% 45% at 12% 4%, hsl(var(--foreground) / 0.07), transparent 70%),
+    radial-gradient(55% 42% at 88% 10%, hsl(var(--foreground) / 0.05), transparent 72%),
+    radial-gradient(70% 50% at 50% 106%, hsl(var(--foreground) / 0.06), transparent 76%);
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+html.dark body,
+.dark body,
+body.dark {
+  background-image:
+    radial-gradient(60% 45% at 12% 4%, hsl(var(--foreground) / 0.1), transparent 70%),
+    radial-gradient(55% 42% at 88% 10%, hsl(var(--foreground) / 0.07), transparent 72%),
+    radial-gradient(70% 50% at 50% 106%, hsl(var(--foreground) / 0.08), transparent 76%);
+}
+
+/* --------------------------------------------------------------------------
+   4. 玻璃材质 · 面板
+      底色取应用自己的 --surface，只调整 alpha（色相不变）。
+   -------------------------------------------------------------------------- */
+
+.surface-card,
+.surface-dialog,
+.settings-panel,
+.popup-panel,
+.theme-editor,
+.haze-surface,
+.has-glass {
+  background-color: hsl(var(--surface) / var(--ios-glass-tint));
+  background-image: linear-gradient(
+    180deg,
+    hsl(var(--ios-sheen)),
+    hsl(var(--ios-sheen) / 0) 42%
+  );
+  -webkit-backdrop-filter: blur(var(--ios-glass-blur)) saturate(var(--ios-glass-saturate));
+  backdrop-filter: blur(var(--ios-glass-blur)) saturate(var(--ios-glass-saturate));
+  border: 0.5px solid hsl(var(--border) / 0.55);
+  border-radius: var(--radius);
+  box-shadow:
+    /* 镜面高光：iOS 27 加亮的顶部边缘 */
+    inset 0 1px 0 0 hsl(var(--ios-specular)),
+    /* 加深的边缘：内亮外暗，把玻璃从背景里「抬」出来 */
+    inset 0 0 0 0.5px hsl(var(--ios-edge-inner)),
+    0 0 0 0.5px hsl(var(--ios-edge-outer)),
+    /* 分层阴影，制造纵深 */
+    0 1px 2px hsl(240 6% 0% / 0.05),
+    0 8px 24px hsl(240 6% 0% / 0.08),
+    0 24px 56px hsl(240 6% 0% / 0.06);
+}
+
+html.dark .surface-card,
+html.dark .surface-dialog,
+html.dark .settings-panel,
+html.dark .popup-panel,
+html.dark .theme-editor,
+html.dark .haze-surface,
+html.dark .has-glass,
+.dark .surface-card,
+.dark .surface-dialog,
+.dark .settings-panel,
+.dark .popup-panel,
+.dark .theme-editor,
+.dark .haze-surface,
+.dark .has-glass {
+  box-shadow:
+    inset 0 1px 0 0 hsl(var(--ios-specular)),
+    inset 0 0 0 0.5px hsl(var(--ios-edge-inner)),
+    0 0 0 0.5px hsl(var(--ios-edge-outer)),
+    inset 0 -1px 0 0 hsl(0 0% 100% / 0.06),
+    0 1px 2px hsl(240 6% 0% / 0.3),
+    0 10px 28px hsl(240 6% 0% / 0.4),
+    0 28px 64px hsl(240 6% 0% / 0.36);
+}
+
+/* --------------------------------------------------------------------------
+   5. 玻璃材质 · 按钮与列表项
+      ⚠ 本节不写 color / background-color，也不使用 filter，
+        元素颜色完全由应用自身的主题色与语义类决定。
+   -------------------------------------------------------------------------- */
+
+button,
+[role="button"],
+li,
+[role="listitem"],
+[role="option"],
+[class*="list-item"],
+[class*="list-row"],
+[class*="listitem"] {
+  -webkit-backdrop-filter: blur(var(--ios-glass-blur)) saturate(var(--ios-glass-saturate));
+  backdrop-filter: blur(var(--ios-glass-blur)) saturate(var(--ios-glass-saturate));
+  /* 镜面高光叠加在元素自身底色之上，不改变其颜色 */
+  background-image: linear-gradient(
+    180deg,
+    hsl(var(--ios-specular)),
+    hsl(var(--ios-specular) / 0) 55%
+  );
+  border: 0.5px solid hsl(var(--border) / 0.45);
+  border-radius: 0.875rem;
+  box-shadow:
+    inset 0 1px 0 0 hsl(var(--ios-specular)),
+    inset 0 0 0 0.5px hsl(var(--ios-edge-inner)),
+    0 0 0 0.5px hsl(var(--ios-edge-outer)),
+    0 1px 2px hsl(240 6% 0% / 0.06);
+}
+
+/* --------------------------------------------------------------------------
+   6. 控件交互
+      iOS 的按压反馈是「缩放到 0.97 + 弹性曲线」，用高光与缩放表达，不改颜色。
+   -------------------------------------------------------------------------- */
+
+button,
+[role="button"],
+input,
+textarea,
+select,
+li,
+[role="listitem"],
+[role="option"],
+[class*="list-item"],
+[class*="list-row"],
+[class*="listitem"] {
+  transition:
+    transform 220ms cubic-bezier(0.32, 0.72, 0, 1),
+    box-shadow 220ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+button:hover:not(:disabled),
+[role="button"]:hover:not([data-disabled]),
+li:hover,
+[role="listitem"]:hover,
+[role="option"]:hover,
+[class*="list-item"]:hover,
+[class*="list-row"]:hover,
+[class*="listitem"]:hover {
+  box-shadow:
+    inset 0 1px 0 0 hsl(var(--ios-specular)),
+    inset 0 0 0 0.5px hsl(var(--ios-edge-inner)),
+    0 0 0 0.5px hsl(var(--ios-edge-outer)),
+    0 2px 8px hsl(240 6% 0% / 0.1);
+}
+
+button:active:not(:disabled),
+[role="button"]:active:not([data-disabled]) {
+  transform: scale(0.97);
+}
+
+/* iOS 输入控件：只给形状（圆角 + 发丝描边）与聚焦高光，不给填充色 */
+input,
+textarea,
+select {
+  border: 0.5px solid hsl(var(--border) / 0.5);
+  border-radius: 0.75rem;
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  border-color: hsl(var(--primary) / 0.9);
+  box-shadow: 0 0 0 3px hsl(var(--primary) / 0.18);
+  outline: none;
+}
+
+/* --------------------------------------------------------------------------
+   7. 语义色块
+      只叠加镜面高光与投影（取应用自己的 primary / secondary），不改写底色。
+   -------------------------------------------------------------------------- */
+
+.bg-primary,
+.bg-primary-container {
+  background-image: linear-gradient(
+    180deg,
+    hsl(0 0% 100% / 0.28),
+    hsl(0 0% 100% / 0) 55%
+  );
+  box-shadow:
+    inset 0 0 0 0.5px hsl(0 0% 100% / 0.22),
+    0 1px 2px hsl(var(--primary) / 0.28),
+    0 6px 18px hsl(var(--primary) / 0.26);
+}
+
+.bg-secondary,
+.bg-secondary-container {
+  background-image: linear-gradient(
+    180deg,
+    hsl(0 0% 100% / 0.24),
+    hsl(0 0% 100% / 0) 55%
+  );
+  box-shadow:
+    inset 0 0 0 0.5px hsl(0 0% 100% / 0.18),
+    0 1px 2px hsl(var(--secondary) / 0.24),
+    0 6px 18px hsl(var(--secondary) / 0.22);
+}
+
+/* --------------------------------------------------------------------------
+   8. 主题卡片
+   -------------------------------------------------------------------------- */
+
+.theme-card {
+  border-radius: var(--radius);
+  transition:
+    transform 260ms cubic-bezier(0.32, 0.72, 0, 1),
+    box-shadow 260ms cubic-bezier(0.32, 0.72, 0, 1);
+}
+
+.theme-card:hover {
+  transform: translateY(-3px);
+  box-shadow:
+    inset 0 1px 0 0 hsl(var(--ios-specular)),
+    inset 0 0 0 0.5px hsl(var(--ios-edge-inner)),
+    0 0 0 0.5px hsl(var(--ios-edge-outer)),
+    0 10px 28px hsl(240 6% 0% / 0.12),
+    0 24px 56px hsl(240 6% 0% / 0.1);
+}
+
+/* --------------------------------------------------------------------------
+   9. 状态语义类
+      用材质强度表达状态，不给元素指定颜色。
+        .is-active：更亮的镜面高光 + 更实的边缘环
+        .is-disabled：整体 45% 透明度（对应 iOS disabled label 观感）
+   -------------------------------------------------------------------------- */
+
+.is-active {
+  box-shadow:
+    inset 0 1px 0 0 hsl(var(--ios-specular)),
+    inset 0 0 0 1px hsl(var(--ios-edge-inner)),
+    0 0 0 0.5px hsl(var(--ios-edge-outer)),
+    0 2px 10px hsl(240 6% 0% / 0.12);
+}
+
+.is-disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* --------------------------------------------------------------------------
+   10. iOS 覆盖式滚动条
+   -------------------------------------------------------------------------- */
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background-color: transparent;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: hsl(var(--foreground) / 0.22);
+  background-clip: content-box;
+  border: 3px solid transparent;
+  border-radius: 999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background-color: hsl(var(--foreground) / 0.34);
+}
+
+/* --------------------------------------------------------------------------
+   11. 无障碍适配
+      iOS 27 的 Liquid Glass 会响应「减少透明度」与「增强对比度」。
+   -------------------------------------------------------------------------- */
+
+@media (prefers-reduced-transparency: reduce) {
+  :root,
+  :root[class] {
+    --ios-glass-tint: 1;
+    --ios-glass-blur: 0px;
+  }
+
+  .surface-card,
+  .surface-dialog,
+  .settings-panel,
+  .popup-panel,
+  .theme-editor,
+  .haze-surface,
+  .has-glass {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    background-image: none;
+  }
+
+  button,
+  [role="button"],
+  li,
+  [role="listitem"],
+  [role="option"],
+  [class*="list-item"],
+  [class*="list-row"],
+  [class*="listitem"] {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+}
+
+@media (prefers-contrast: more) {
+  :root,
+  :root[class] {
+    --ios-glass-tint: 0.94;
+    --ios-glass-blur: 14px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  button,
+  [role="button"],
+  input,
+  textarea,
+  select,
+  li,
+  [role="listitem"],
+  [role="option"],
+  [class*="list-item"],
+  [class*="list-row"],
+  [class*="listitem"],
+  .theme-card {
+    transition: none;
+  }
+
+  button:active:not(:disabled),
+  [role="button"]:active:not([data-disabled]) {
+    transform: none;
+  }
+
+  .theme-card:hover {
+    transform: none;
+  }
+}

@@ -13,6 +13,18 @@
       "resourceUrl": "theme/default-blue"
     },
     {
+      "id": "ios-liquidglass",
+      "name": "iOS Liquid Glass",
+      "version": "1.0.0",
+      "author": "MXDex_Razero",
+      "description": "iOS 27 Liquid Glass 材质主题，加深边缘与镜面高光的液态玻璃、连续圆角、iOS 交互曲线，不接管主题色。",
+      "preview": "preview.png",
+      "entry": "theme.css",
+      "minAppVersion": "2.0.0-alpha1",
+      "controlsThemeColor": false,
+      "resourceUrl": "theme/ios-liquidglass"
+    },
+    {
       "id": "neon-pulse",
       "name": "Neon Pulse",
       "version": "0.1.0",
