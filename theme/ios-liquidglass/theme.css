@@ -15,10 +15,13 @@
 
    可调旋钮（改一个值即可全局生效）：
      --ios-glass-tint      玻璃着色量，等价于 iOS 27 的通透度滑块
-                           0.55 = 极致通透（crystal-clear）
-                           1.00 = 完全着色（fully tinted）
-     --ios-glass-blur      折射模糊半径
-     --ios-glass-saturate  折射饱和度
+                           0.20 ~ 0.35 = 清透玻璃（crystal-clear，当前取值）
+                           0.70 ~ 1.00 = 磨砂 / 完全着色（fully tinted）
+                           ⚠ 想更透就往下调这个值，它比 blur 的影响大得多
+     --ios-glass-blur      折射模糊半径（越大越能抹平背后细节，但过高会发闷）
+     --ios-glass-saturate  折射饱和度（越高玻璃味越足）
+     --ios-glass-brightness 折射提亮（深色下调高可增强通透感）
+     --ios-sheen           顶部雾面高光（调高会明显增加磨砂感）
      --radius              连续圆角基准
    ========================================================================== */
 
@@ -31,17 +34,20 @@
   /* 形状：iOS 连续圆角（squircle），面板 22px */
   --radius: 1.375rem;
 
-  /* --- Liquid Glass 材质 --- */
-  --ios-glass-tint: 0.72;
-  --ios-glass-blur: 30px;
-  --ios-glass-saturate: 185%;
+  /* --- Liquid Glass 材质 ---
+     通透感的三个关键：着色量要低、折射要强、高光要干净。
+     着色量过高就会退化成「磨砂」而非玻璃。 */
+  --ios-glass-tint: 0.34;
+  --ios-glass-blur: 40px;
+  --ios-glass-saturate: 210%;
+  --ios-glass-brightness: 1.06;
 
-  /* 加深的边缘：iOS 27 用来制造纵深与分离感 */
-  --ios-edge-inner: 0 0% 100% / 0.55;
-  --ios-edge-outer: 240 6% 10% / 0.1;
+  /* 加深的边缘：iOS 27 用来在低着色下维持可读性 */
+  --ios-edge-inner: 0 0% 100% / 0.6;
+  --ios-edge-outer: 240 6% 10% / 0.12;
   /* 镜面高光 */
-  --ios-specular: 0 0% 100% / 0.5;
-  --ios-sheen: 0 0% 100% / 0.45;
+  --ios-specular: 0 0% 100% / 0.55;
+  --ios-sheen: 0 0% 100% / 0.18;
 }
 
 /* --------------------------------------------------------------------------
@@ -52,14 +58,15 @@
 :root.dark,
 html.dark[class],
 .dark {
-  --ios-glass-tint: 0.62;
-  --ios-glass-blur: 34px;
-  --ios-glass-saturate: 200%;
+  --ios-glass-tint: 0.28;
+  --ios-glass-blur: 44px;
+  --ios-glass-saturate: 230%;
+  --ios-glass-brightness: 1.14;
 
-  --ios-edge-inner: 0 0% 100% / 0.16;
-  --ios-edge-outer: 240 6% 0% / 0.55;
-  --ios-specular: 0 0% 100% / 0.14;
-  --ios-sheen: 0 0% 100% / 0.08;
+  --ios-edge-inner: 0 0% 100% / 0.18;
+  --ios-edge-outer: 240 6% 0% / 0.6;
+  --ios-specular: 0 0% 100% / 0.16;
+  --ios-sheen: 0 0% 100% / 0.05;
 }
 
 /* --------------------------------------------------------------------------
@@ -104,8 +111,10 @@ body.dark {
     hsl(var(--ios-sheen)),
     hsl(var(--ios-sheen) / 0) 42%
   );
-  -webkit-backdrop-filter: blur(var(--ios-glass-blur)) saturate(var(--ios-glass-saturate));
-  backdrop-filter: blur(var(--ios-glass-blur)) saturate(var(--ios-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--ios-glass-blur)) saturate(var(--ios-glass-saturate))
+    brightness(var(--ios-glass-brightness));
+  backdrop-filter: blur(var(--ios-glass-blur)) saturate(var(--ios-glass-saturate))
+    brightness(var(--ios-glass-brightness));
   border: 0.5px solid hsl(var(--border) / 0.55);
   border-radius: var(--radius);
   box-shadow:
@@ -158,8 +167,10 @@ li,
 [class*="list-item"],
 [class*="list-row"],
 [class*="listitem"] {
-  -webkit-backdrop-filter: blur(var(--ios-glass-blur)) saturate(var(--ios-glass-saturate));
-  backdrop-filter: blur(var(--ios-glass-blur)) saturate(var(--ios-glass-saturate));
+  -webkit-backdrop-filter: blur(var(--ios-glass-blur)) saturate(var(--ios-glass-saturate))
+    brightness(var(--ios-glass-brightness));
+  backdrop-filter: blur(var(--ios-glass-blur)) saturate(var(--ios-glass-saturate))
+    brightness(var(--ios-glass-brightness));
   /* 镜面高光叠加在元素自身底色之上，不改变其颜色 */
   background-image: linear-gradient(
     180deg,
