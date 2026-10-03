@@ -14,8 +14,8 @@
     },
     {
       "id": "ios-liquidglass",
-      "name": "iOS Liquid Glass",
-      "version": "1.0.0",
+      "name": "Glassmorphism",
+      "version": "1.1.0",
       "author": "MXDexRazero",
       "description": "iOS 27 Liquid Glass 材质主题，加深边缘与镜面高光的液态玻璃、连续圆角、iOS 交互曲线，不接管主题色。",
       "preview": "preview.png",
