@@ -30,7 +30,7 @@ MicYou 的主题目录与主题包仓库。
 | 预览 | ID | 名称 | 描述 | 版本 | 作者 | 主题色 |
 | --- | --- | --- | --- | --- | --- | --- |
 | ![Default Blue](theme/default-blue/preview.png) | `default-blue` | Default Blue | MicYou 的默认蓝色主题，提供浅色和深色 Material 3 主题变量。 | 1.0.0 | MicYou | 接管主题色 |
-| ![Glassmorphism](theme/ios-liquidglass/preview.png) | `ios-liquidglass` | Glassmorphism | iOS 27 Liquid Glass 材质主题，加深边缘与镜面高光的液态玻璃、连续圆角、iOS 交互曲线，不接管主题色。 | 1.1.0 | MXDexRazero | 不接管主题色 |
+| ![Glassmorphism](theme/ios-liquidglass/preview.png) | `ios-liquidglass` | Glassmorphism | iOS 27 Liquid Glass 材质主题，加深边缘与镜面高光的液态玻璃、连续圆角、iOS 交互曲线，不接管主题色。 | 1.1.1 | MXDexRazero | 不接管主题色 |
 | ![Neon Pulse](theme/neon-pluse/preview.png) | `neon-pulse` | Neon Pulse | 霓虹青、品红与酸性绿构成的实验性赛博主题。 | 0.1.0 | MicYou | 接管主题色 |
 | ![Square Corners](theme/square-corners/preview.png) | `square-corners` | Square Corners | 实验性直角界面主题，只调整形状，不接管主题色。 | 0.1.0 | MicYou | 不接管主题色 |
 
